@@ -6,19 +6,19 @@ A Streamlit app to compare document layout detection across multiple vision mode
 
 ## Models Supported
 
-| Model | Type | How it runs |
-|-------|------|-------------|
-| **Qwen3.5-VL** (finetuned) | VLM | Self-hosted GPU server |
-| **DeepSeek OCR2** | VLM | Self-hosted GPU server |
-| **LightOn OCR 2** | VLM | Self-hosted GPU server |
-| **OpenRouter** (any vision model) | API | OpenRouter API — GPT-4o, Gemini, Claude, Llama, etc. |
+| Model | Type |
+|-------|------|
+| **Qwen3.5-VL** (finetuned) | VLM |
+| **DeepSeek OCR2** | VLM |
+| **LightOn OCR 2** | VLM |
+| **OpenRouter** (any vision model) | API — GPT-4o, Gemini, Claude, Llama, etc. |
 
 ## Setup
 
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/<your-username>/layout-detection-playground.git
+git clone https://github.com/NitheshRajmohan/layout-detection-playground.git
 cd layout-detection-playground
 pip install -r requirements.txt
 ```
@@ -30,25 +30,10 @@ cp .env.example .env
 ```
 
 Edit `.env`:
-- `GPU_HOST` — IP/hostname of your GPU server running the model backends
+- `GPU_HOST` — IP/hostname of the server running the model backends
 - `OPENROUTER_API_KEY` — your [OpenRouter](https://openrouter.ai/) API key (for the OpenRouter option)
 
-### 3. Start model servers on GPU
-
-Each model runs as a FastAPI service:
-
-```bash
-# Qwen (port 8000)
-uvicorn layout_service:app --host 0.0.0.0 --port 8000
-
-# DeepSeek OCR2 (port 8001)
-python server.py  # runs on port 8001
-
-# LightOn OCR (port 8002)
-uvicorn lighton_server:app --host 0.0.0.0 --port 8002
-```
-
-### 4. Run the app
+### 3. Run the app
 
 ```bash
 streamlit run app.py
@@ -65,18 +50,17 @@ streamlit run app.py
 ## Architecture
 
 ```
-Browser  →  Streamlit (local)  →  GPU Server (FastAPI endpoints)
-                                    ├── :8000  Qwen3.5-VL
-                                    ├── :8001  DeepSeek OCR2
-                                    └── :8002  LightOn OCR
-                               →  OpenRouter API (cloud)
+Browser  →  Streamlit App  →  Model Backends (FastAPI)
+                                ├── Qwen3.5-VL (finetuned)
+                                ├── DeepSeek OCR2
+                                └── LightOn OCR 2
+                           →  OpenRouter API (cloud VLMs)
 ```
 
 ## Project Structure
 
 ```
 ├── app.py               # Streamlit frontend
-├── lighton_server.py     # FastAPI wrapper for LightOn OCR (deploy on GPU)
 ├── requirements.txt
 ├── .env.example
 └── .gitignore
